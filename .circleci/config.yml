@@ -9,7 +9,7 @@ jobs:
     executor: python/default
     steps:
       - checkout
-      - circleCI_test.py
+      - run: python3 circleCI_test.py
 workflows:
   main:
     jobs:
