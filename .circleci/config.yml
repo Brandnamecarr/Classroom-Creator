@@ -20,7 +20,7 @@ jobs:
             pipenv install
       - run:
           command: |
-          pipenv run python circleCI_test.py test:
+            pipenv run python circleCI_test.py
 
 
 # Invoke jobs via workflows
