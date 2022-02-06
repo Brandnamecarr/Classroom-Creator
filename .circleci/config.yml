@@ -17,6 +17,7 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - checkout    # checkout source code to working directory.
+      - run: brew install pyenv
       - run:
           command: |
             sudo pip install pipenv
