@@ -13,10 +13,19 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - checkout
+      - checkout    # checkout source code to working directory.
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          command: |
+            sudo pip install pipenv
+            pipenv install
+      - run:
+        command: |
+          pipend run python circleCI_test.py test
+      - store_test_results: # Upload test results for display in Test Summary
+            path: test_results
+       - store_artefacts:
+            path: test_results
+            destination: tr1
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
