@@ -10,8 +10,8 @@ jobs:
     steps:
       - checkout
       - python/circleCI_test.py
-   workflows:
-    main:
-      jobs:
-        - build-and-test
+workflows:
+  main:
+    jobs:
+      - build-and-test
 
