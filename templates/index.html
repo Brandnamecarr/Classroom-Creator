@@ -40,11 +40,127 @@
 
 
     <!-- body of page is developed here -->
-    <h1>Home page</h1>
-    <button>Get Server Time</button>
+    <p>
+      <br><br>
+    </p>
+    <!--CSV CHECKBOX-->
+    <!-- FIXME: Add functionality between checkbox and Canvas Sign In Box  -->
+    <input type = "checkbox" id="canvasSignIn" name="CSVSignIn" value="signedIn"> 
+    <label for="canvasSignIn">            Upload CVS file (experienced users only)</label><br>
 
+    <style>
+      /* (A) SHARED CLASS */
+      .box {
+        /*FIXME: Add shared functionality (e.g. click sound) for boxes */
+        margin: 10px;
+        font-size: 24px;
+        width: 300px;
+        float: left;
+        height: 300px;
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      /* (B) BOX VARIATIONS */
+      /* (B1) CANVAS SIGN IN BOX*/
+      .canvasSignInBox {
+        color: black;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        padding: 50px, 0;
+        border-radius: 100%;
+        /* The box shadow here and in Google Sign in box could change to green when ready and eliminate status bar 
+        source: https://manuarora.in/boxshadows*/
+        box-shadow: 0 20px 50px rgba(240, 46, 170, 0.7);
+      }
+
+      /* (B2) GOOGLE SIGN IN BOX*/
+      .googleSignInBox {
+        color: black;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        padding: 150px, 0;
+        border-radius: 100%;
+        box-shadow: 0px 20px 50px rgba(240, 46, 170, 0.7);
+      }
+
+      /* (B3) CANVAS STATUS BAR*/
+      .canvasStatusBar {
+        color: red;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        height: 50px;
+        padding: 0px 0;
+      }
+
+      /* (B4) GOOGLE STATUS BAR*/
+      .googleStatusBar {
+        color: red;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        height: 50px;
+        padding: 0px 0;
+      }
+      
+      p {
+        background-image: url(https://media.istockphoto.com/photos/abstract-dark-green-grunge-background-picture-id1178625456?k=20&m=1178625456&s=612x612&w=0&h=zTEgWSV7gnwiMTQz4x6lKrOH_DFx7dRgZjX5WAJwLww=);
+      }
+    </style>
+    
+    <!-- (B1) CANVAS SIGN IN BOX
+    Add functionality-->
+    <div class="box canvasSignInBox">
+      Sign in &<br>
+      Retrieve Data With <br>
+      Canvas
+    </div>
+    
+    <!--MIGRATE BUTTON 
+    Add funcionality-->
+      <button style="margin-top: 150px; float: left" disabled>
+        Migrate Data
+      </button>
+
+    <!-- (B2 GOOGLE SIGN IN BOX)
+    Add functionality-->
+    <div class="box googleSignInBox">
+      Sign in &<br>
+      Connect To<br>
+      Google Classroom
+    </div>
+
+    <!-- (B3 CANVAS STATUS BAR)
+    Add functionality-->
+    <div style="clear:both;">
+    <div class=" box canvasStatusBar">
+      <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
+      CANVAS NOT READY
+    </div>
+    </div>
+
+    <div style="margin-left: 427px;">
+    <div class=" box canvasStatusBar">
+      <!--Add functionality; Change to green background upon Google sign in with new message -->
+      GOOGLE NOT READY
+    </div>
+  </div>
+
+    <div style="clear:both;">
+      <a href="url">First time user?  Click here for tutorial</a>
+    </div>
+
+
+
+<!--FIXME: Keep Get Server Time button?-->
+
+<div style="clear:both;">
+  <p>
+    <br>
+  </p>    
+<button>Get Server Time</button>
     <div id="server-time"></div>
     </body>
+  </div>
     
 
 </html>
