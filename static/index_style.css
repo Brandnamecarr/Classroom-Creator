@@ -1,1 +1,65 @@
-/* home page css here */
+/* 
+      /* (A) SHARED CLASS */
+      .box {
+        /*FIXME: Add shared functionality (e.g. click sound) for boxes */
+        margin: 10px;
+        font-size: 24px;
+        width: 300px;
+        float: left;
+        height: 300px;
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      /* (B) BOX VARIATIONS */
+      /* (B1) CANVAS SIGN IN BOX*/
+      .canvasSignInBox {
+        color: black;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        padding: 50px, 0;
+        border-radius: 100%;
+        /* The box shadow here and in Google Sign in box could change to green when ready and eliminate status bar 
+        source: https://manuarora.in/boxshadows*/
+        /* box-shadow: 0 20px 50px rgba(240, 46, 170, 0.7); */
+        justify-content: left;
+      }
+
+      /* (B2) GOOGLE SIGN IN BOX*/
+      .googleSignInBox {
+        color: black;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        padding: 150px, 0;
+        border-radius: 100%;
+        /* box-shadow: 0px 20px 50px rgba(240, 46, 170, 0.7); */
+        justify-content: right;
+      }
+
+      /* (B3) CANVAS STATUS BAR*/
+      .canvasStatusBar {
+        color: red;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        height: 50px;
+        padding: 0px 0;
+      }
+
+      /* (B4) GOOGLE STATUS BAR*/
+      .googleStatusBar {
+        color: red;
+        background: cornsilk;
+        border: 5px solid burlywood;
+        height: 50px;
+        padding: 0px 0;
+      }
+      
+      footer {
+        text-align: center;
+        padding: 3px;
+        background-color: #f8f9fa;
+        position: absolute;
+        bottom: 0;
+        height: 60px;
+        width: 100%;
+    }
