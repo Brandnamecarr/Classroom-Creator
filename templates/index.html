@@ -16,6 +16,7 @@
         <title> Home </title>
     </head>
     <body>
+      <!-- ALL THE NAVBAR CODE -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="/">Classroom Creator</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,56 +40,80 @@
 
     <!-- body of page is developed here -->
     <br>
+
     <!--CSV CHECKBOX-->
     <!-- FIXME: Add functionality between checkbox and Canvas Sign In Box  -->
     <input type="checkbox" id="enable_uploads"/> <label for='enable_uploads'> Upload CSV (Experienced Users Only) </label>
-
+    
+    <!-- If Checkbox is clicked, display: -->
     <div id="uploads">
         <label for='fileuploads'>Uploads Enabled</label>
-    <input type="file" id="fileuploads"/>
+    <input type="file"/>
     </div>
     <br>
     
-    <!-- (B1) CANVAS SIGN IN BOX
-    Add functionality-->
-    <div class="box canvasSignInBox">
-      Sign in &<br>
-      Retrieve Data With <br>
-      Canvas
-    </div>
-    
-    <!--MIGRATE BUTTON 
-    Add funcionality-->
-      <button style="margin-top: 150px; float: left" disabled>
-        Migrate Data
-      </button>
+    <!-- BOOTSTRAP GRID ORGANIZATION: (MAIN APPLICATION COMPONENTS) -->
+    <div class="row"> <!-- Row 1 -->
 
-    <!-- (B2 GOOGLE SIGN IN BOX)
-    Add functionality-->
-    <div class="box googleSignInBox">
-      Sign in &<br>
-      Connect To<br>
-      Google Classroom
-    </div>
+      <!-- Want the Canvas Component to Span 5 columns. -->
+      <div class="col-5">
+          <!-- (B1) CANVAS SIGN IN BOX
+                  Add functionality-->
+        <div class="box canvasSignInBox">
+          Sign in &<br>
+          Retrieve Data With <br>
+          Canvas
+        </div>
+      </div>
 
-    <!-- (B3 CANVAS STATUS BAR)
-    Add functionality-->
+      <!-- Want the Migrate Button to Span 2 Columns -->
+      <div class="col-2">
+         <!--MIGRATE BUTTON 
+                Add funcionality-->
+                <button class="migratebutton" style="margin-top: 150px;" disabled>
+                 Migrate Data
+                </button>
+      </div>
+
+      <!-- Want Google Component to Span 5 columns. -->
+      <div class="col-5 justify-contents:right">
+          <!-- (B2 GOOGLE SIGN IN BOX)
+            Add functionality-->
+      <div class="box googleSignInBox">
+        Sign in &<br>
+        Connect To<br>
+        Google Classroom
+      </div>
+    </div>
+    </div> <!-- End of 1st row div. -->
+
+    <!-- Beginning of Row 2: (Buttons) -->
+    <div class="row">
+      
+      <!-- (B3 CANVAS STATUS BAR)
+      Add functionality-->
+      <div class="col-5">
+        <div class=" box canvasStatusBar">
+          <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
+          CANVAS NOT READY
+        </div>
+      </div>
+
+      <!-- Empty Placeholder for migrate button -->
+      <div class="col-2"></div>
+
+      <!-- Google Status Bar (Add functionality). -->
+      <div class="col-5">
+          <div class=" box googleStatusBar">
+            <!--Add functionality; Change to green background upon Google sign in with new message -->
+            GOOGLE NOT READY
+          </div>
+      </div>
+    </div> <!-- End of Row 2 -->
+  
+    <!-- Reference to documentation page -->
     <div style="clear:both;">
-    <div class=" box canvasStatusBar">
-      <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
-      CANVAS NOT READY
-    </div>
-    </div>
-
-    <div style="margin-left: 427px;">
-    <div class=" box canvasStatusBar">
-      <!--Add functionality; Change to green background upon Google sign in with new message -->
-      GOOGLE NOT READY
-    </div>
-  </div>
-
-    <div style="clear:both;">
-      <a href="about">First time user?  Click here for tutorial</a>
+      <a href="docs">First time user?  Click here for tutorial</a>
     </div>
 
 
@@ -100,10 +125,12 @@
     <br>
   </p>    
 <button>Get Server Time</button>
-    <div id="server-time"></div>
-    </body>
+    <div id="server-time"></div> 
   </div>
+  
+</body> <!-- End of Application Page -->
     
+  <!-- FOOTER COMPONENT -->
   <footer> 
     <p1> Developed by Team 9 From Outer Space</p1>
     <p1> @ The University of Florida, CEN 3031, Spring 2022</p1>
