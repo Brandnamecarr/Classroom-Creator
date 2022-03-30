@@ -14,6 +14,13 @@
         
         <!-- Adding a title to the main page-->
         <title> Home </title>
+
+        <!-- Google Req: specifying the app's client ID  -->
+        <meta name="google-signin-client_id" content="694597757586-21c0navecahr8tpi3laoc53030r0t4gp.apps.googleusercontent.com">
+        <!-- Adding the Google Platform Library ( Need for Google Sign in )-->
+        <script src="https://apis.google.com/js/api.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+
     </head>
     <body>
       <!-- ALL THE NAVBAR CODE -->
@@ -80,9 +87,8 @@
           <!-- (B2 GOOGLE SIGN IN BOX)
             Add functionality-->
       <div class="box googleSignInBox">
-        Sign in &<br>
-        Connect To<br>
-        Google Classroom
+        <!-- Need to change the onsucess to the function to triggle the text change in the status bar. -->
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
       </div>
     </div>
     </div> <!-- End of 1st row div. -->
@@ -90,8 +96,8 @@
     <!-- Beginning of Row 2: (Buttons) -->
     <div class="row">
       
-      <!-- (B3 CANVAS STATUS BAR)
-      Add functionality-->
+      <!-- (B3 CANVAS STATUS BAR) -->
+      <!-- ADD Functionality -->
       <div class="col-5">
         <div class=" box canvasStatusBar">
           <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
@@ -104,11 +110,11 @@
 
       <!-- Google Status Bar (Add functionality). -->
       <div class="col-5">
-          <div class=" box googleStatusBar">
-            <!--Add functionality; Change to green background upon Google sign in with new message -->
+          <div class="box googleStatusBar">
+            <!--Add functionality; Change to green success display upon Google sign in with new message -->
             GOOGLE NOT READY
-          </div>
-      </div>
+        </div>
+      </div> <!-- End of Last column to the right -->
     </div> <!-- End of Row 2 -->
   
     <!-- Reference to documentation page -->
@@ -127,7 +133,6 @@
 <button>Get Server Time</button>
     <div id="server-time"></div> 
   </div>
-  
 </body> <!-- End of Application Page -->
     
   <!-- FOOTER COMPONENT -->
