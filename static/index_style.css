@@ -53,7 +53,13 @@
         height: 50px;
         padding: 0px 0;
       }
-      
+      /* Styling for the migrate button, might not need this */ 
+
+      /* .migratebutton {
+        font-size: large;
+        justify-content: left;
+      } */
+
       footer {
         text-align: center;
         padding: 3px;
