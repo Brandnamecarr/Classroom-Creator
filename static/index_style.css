@@ -35,6 +35,11 @@
         /* box-shadow: 0px 20px 50px rgba(240, 46, 170, 0.7); */
         justify-content: right;
       }
+      /* Google Sign in Button pre-sign in*/
+      .g-signin2 {
+        padding-top: 15%;
+        display: inline-block;
+      }
 
       /* (B3) CANVAS STATUS BAR*/
       .canvasStatusBar {
@@ -53,7 +58,13 @@
         height: 50px;
         padding: 0px 0;
       }
-      
+      /* Styling for the migrate button, might not need this */ 
+
+      /* .migratebutton {
+        font-size: large;
+        justify-content: left;
+      } */
+
       footer {
         text-align: center;
         padding: 3px;
