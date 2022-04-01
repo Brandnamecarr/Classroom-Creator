@@ -1,13 +1,3 @@
-// Server-Time test function.
-$(document).ready(function(){
-    $("button").click(function(){
-      $.ajax({url: "server_time", success: function(result){
-        $("#server-time").html(result);
-        console.log(result);
-      }});
-    });
-  });
-
 // will display the File-Upload Option if the CSV checkbox is clicked.
 $(document).ready(function(){
   $('#uploads').hide();
@@ -24,16 +14,15 @@ $(document).ready(function() {
 });
 
 
-//test fucntion for signing in with google.
-//Prints users' information.
+// google signin funciton will send token to flask server
+// for server side usage
 function onSignIn(googleUser) {
   console.log("Signed in!");
   //Useful data for your client-side scripts:
-  var profile = googleUser.getBasicProfile();
-  console.log("ID: " + profile.getId()); // Don't send this directly to your server!
-  console.log('Full Name: ' + profile.getName());
-  console.log('Given Name: ' + profile.getGivenName());
-  console.log('Family Name: ' + profile.getFamilyName());
-  console.log("Image URL: " + profile.getImageUrl());
-  console.log("Email: " + profile.getEmail());
+  var id_token = googleUser.getAuthResponse().id_token;
+  $.ajax({
+          type : 'POST',
+          url: "token", 
+          data : {'id_token' : id_token}
+          });
 }

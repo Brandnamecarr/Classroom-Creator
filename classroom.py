@@ -1,17 +1,18 @@
 class Classroom():
 
-    def __init__(self, course_id : int, course_name : str, students : 'list[str]'):
+    def __init__(self, course_id : str, course_name : str, teacher : str, students : 'list[str]'):
         self._course_id = course_id
         self._course_name = course_name
+        self._teacher = teacher
         self._students = students
     
     # Getter and Setter Functions for class properties
     @property
-    def course_id(self) -> int:
+    def course_id(self) -> str:
         return self._course_id
     
     @course_id.setter
-    def course_id(self, id : int) -> None:
+    def course_id(self, id : str) -> None:
         self._course_id = id
     
     @property
@@ -21,6 +22,14 @@ class Classroom():
     @course_name.setter
     def course_name(self, name : str) -> None:
         self._course_name = name
+    
+    @property
+    def teacher(self) -> str:
+        return self._teacher
+    
+    @teacher.setter
+    def teacher(self, new_teacher : str) -> None:
+        self._teacher = new_teacher
     
     @property
     def students(self) -> 'list[str]':
@@ -36,5 +45,8 @@ class Classroom():
 
 
     # TODO - Create format data for Google classroom in format if needed
+    def create_course_format(self):
+        pass
+
 
     # TODO - Identify canvas import stategy

@@ -16,7 +16,9 @@
         <title> Home </title>
 
         <!-- Google Req: specifying the app's client ID  -->
-        <meta name="google-signin-client_id" content="694597757586-21c0navecahr8tpi3laoc53030r0t4gp.apps.googleusercontent.com">
+        <meta name="google-signin-client_id" content="71478817289-2tfg9umcd66u480sip39slf87j0dfh1j.apps.googleusercontent.com">
+        <!-- Added scope for google sign-in in order to see classes. -->
+        <meta name="google-signin-scope" content="profile email https://www.googleapis.com/auth/classroom.courses https://www.googleapis.com/auth/classroom.rosters">
         <!-- Adding the Google Platform Library ( Need for Google Sign in )-->
         <script src="https://apis.google.com/js/api.js"></script>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -124,15 +126,7 @@
 
 
 
-<!--FIXME: Keep Get Server Time button?-->
 
-<div style="clear:both;">
-  <p>
-    <br>
-  </p>    
-<button>Get Server Time</button>
-    <div id="server-time"></div> 
-  </div>
 </body> <!-- End of Application Page -->
     
   <!-- FOOTER COMPONENT -->
