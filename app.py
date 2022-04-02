@@ -4,6 +4,11 @@ import os
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
+from flask_wtf import FlaskForm
+from wtforms import FileField, SubmitField
+from wtforms.validators import InputRequired
+from werkzeug.utils import secure_filename
+from csv_service import CsvDataPoint, csv_service
 
 # needed to imitate https server
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -14,10 +19,25 @@ Scopes = ["https://www.googleapis.com/auth/classroom.courses", "https://www.goog
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
+app.config['SECRET_KEY'] ='supersecretkey'
 
-@app.route("/")
+# class for uploading a file upload form.
+class UploadFileForm(FlaskForm):
+    # creates buttons with these names. 
+    file = FileField("File", validators=[InputRequired()])
+    submit = SubmitField("Upload File")
+
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home():
-    return render_template('index.html')
+    csvUploadSuccess = False
+    form = UploadFileForm()
+    if form.validate_on_submit():
+        file = form.file.data # First grab the file
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) # Then save the file
+        csvUploadSuccess = True
+        return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename)
+    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess)   
 
 # login process to access google api
 @app.route("/google_login")
