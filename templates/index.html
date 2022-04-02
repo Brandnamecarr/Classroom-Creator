@@ -45,27 +45,42 @@
     <br>
 
     <!--CSV CHECKBOX-->
-    <!-- FIXME: Add functionality between checkbox and Canvas Sign In Box  -->
-    <input type="checkbox" id="enable_uploads"/> <label for='enable_uploads'> Upload CSV (Experienced Users Only) </label>
-    
-    <!-- If Checkbox is clicked, display: -->
-    <div id="uploads">
-        <label for='fileuploads'>Uploads Enabled</label>
-    <input type="file"/>
-    </div>
+    <!-- If a CSV has NOT been uploaded, box is checkable. Box will change the text in Canvas Box b/w CSV Uploader OR Canvas Sign-in Button -->
+    <!-- If a CSV HAS BEEN UPLOADED, checkbox is DISABLED. (might want to change later). -->
+    {%if csvUploadSuccess == False %}
+      <input type="checkbox" id="enable_uploads" onchange="changeCanvasBox(this)"/> 
+      <label for='enable_uploads'> Upload CSV (Experienced Users Only) </label>
+    {% endif %}
+    {%if csvUploadSuccess == True %} 
+      <input type="checkbox" id="enable_uploads" onchange="changeCanvasBox(this)" disabled/> 
+      <label for='enable_uploads'> Upload CSV (Experienced Users Only) </label>
+    {% endif %}
     <br>
     
     <!-- BOOTSTRAP GRID ORGANIZATION: (MAIN APPLICATION COMPONENTS) -->
     <div class="row"> <!-- Row 1 -->
 
-      <!-- Want the Canvas Component to Span 5 columns. -->
+      <!-- (B1) CANVAS SIGN IN BOX: have to add the proper button-->
+      <!-- Canvas Component Spans 5 Columns. -->
       <div class="col-5">
-          <!-- (B1) CANVAS SIGN IN BOX
-                  Add functionality-->
+        
+        <!-- Canvas sign-in OR CSV Upload Box. -->
         <div class="box canvasSignInBox">
-          Sign in &<br>
-          Retrieve Data With <br>
-          Canvas
+          {%if csvUploadSuccess == False%}
+          <label id="canvasSignInBoxText"> Sign in With Canvas </label>
+              <!-- If Checkbox is clicked, display: -->
+              <div id="uploads">
+              <form id="uploadCSV" method='POST' enctype ='multipart/form-data'>
+                {{ form.hidden_tag() }}
+                {{ form.file() }}
+                {{ form.submit() }}
+              </form>
+              </div>
+          {% endif %}
+          {% if csvUploadSuccess == True %}
+              <label id="canvasSignInBoxText"> Uploaded CSV: </label>
+                {{filename}}
+          {% endif %}
         </div>
       </div>
 
@@ -93,11 +108,15 @@
     <div class="row">
       
       <!-- (B3 CANVAS STATUS BAR) -->
-      <!-- ADD Functionality -->
       <div class="col-5">
         <div class=" box canvasStatusBar">
           <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
-          CANVAS NOT READY
+          {%if csvUploadSuccess %}
+            <label id= "canvasStatusBar"> CSV data received </label>
+            {% endif %}
+          {% if csvUploadSuccess == False %} 
+            <label id="canvasStatusBar"> Canvas Not Ready
+          {% endif %}
         </div>
       </div>
 
