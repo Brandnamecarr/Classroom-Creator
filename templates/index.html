@@ -15,13 +15,7 @@
         <!-- Adding a title to the main page-->
         <title> Home </title>
 
-        <!-- Google Req: specifying the app's client ID  -->
-        <meta name="google-signin-client_id" content="71478817289-2tfg9umcd66u480sip39slf87j0dfh1j.apps.googleusercontent.com">
-        <!-- Added scope for google sign-in in order to see classes. -->
-        <meta name="google-signin-scope" content="profile email https://www.googleapis.com/auth/classroom.courses https://www.googleapis.com/auth/classroom.rosters">
-        <!-- Adding the Google Platform Library ( Need for Google Sign in )-->
-        <script src="https://apis.google.com/js/api.js"></script>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        
 
     </head>
     <body>
@@ -90,7 +84,7 @@
             Add functionality-->
       <div class="box googleSignInBox">
         <!-- Need to change the onsucess to the function to triggle the text change in the status bar. -->
-        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+        <a class="button" href="/google_login">Google Login</a>
       </div>
     </div>
     </div> <!-- End of 1st row div. -->

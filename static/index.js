@@ -16,13 +16,16 @@ $(document).ready(function() {
 
 // google signin funciton will send token to flask server
 // for server side usage
-function onSignIn(googleUser) {
-  console.log("Signed in!");
-  //Useful data for your client-side scripts:
-  var id_token = googleUser.getAuthResponse().id_token;
+function getGoogleClassroomData() {
   $.ajax({
-          type : 'POST',
-          url: "token", 
-          data : {'id_token' : id_token}
+          url: "get_current_google_classrooms",
+          success: function(data){
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+              console.log(data[0].descriptionHeading);
+            }
+          }
           });
 }
+
+getGoogleClassroomData();
