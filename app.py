@@ -29,6 +29,8 @@ class UploadFileForm(FlaskForm):
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
 def home():
+    if 'credentials' not in session:
+        return redirect('google_login')
     csvUploadSuccess = False
     form = UploadFileForm()
     if form.validate_on_submit():
