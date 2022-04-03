@@ -19,13 +19,12 @@ Scopes = ["https://www.googleapis.com/auth/classroom.courses", "https://www.goog
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
-app.config['SECRET_KEY'] ='supersecretkey'
 
 # class for uploading a file upload form.
 class UploadFileForm(FlaskForm):
     # creates buttons with these names. 
     file = FileField("File", validators=[InputRequired()])
-    submit = SubmitField("Upload File")
+    submit = SubmitField("Upload")
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -42,6 +41,7 @@ def home():
 # login process to access google api
 @app.route("/google_login")
 def google_login():
+    "loging in page"
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes = Scopes)
     
@@ -52,6 +52,12 @@ def google_login():
     session['state'] = state
     
     return redirect(auth_url)
+
+@app.route("/google_login_check")
+def google_login_check():
+    if 'credentials' not in session:
+        return "false"
+    return "true"
 
 @app.route("/google_success")
 def google_success():
@@ -84,7 +90,6 @@ def create_google_classrooms():
 
         if request.method == 'POST':
             post_data = request.form['data']
-            print(post_data)
             # TODO this is where classroom objects are created and classrooms are created
         
         results = service.courses().list().execute()
@@ -93,14 +98,11 @@ def create_google_classrooms():
 
 @app.route("/get_current_google_classrooms")
 def get_current_google_classrooms():
-    if 'credentials' not in session:
-        return redirect('google_login')
-    else:
-        creds = google.oauth2.credentials.Credentials(**session['credentials'])
-        service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
-        results = service.courses().list().execute()
-        courses = results.get('courses', [])
-        return jsonify(courses)
+    creds = google.oauth2.credentials.Credentials(**session['credentials'])
+    service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
+    results = service.courses().list().execute()
+    courses = results.get('courses', [])
+    return jsonify(courses)
 
 @app.route("/about")
 def about():
