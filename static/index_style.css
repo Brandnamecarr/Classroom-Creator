@@ -1,8 +1,13 @@
-/* 
+      /* page sizing */
+      body {
+        min-width: 1200px;
+      }
+      
       /* (A) SHARED CLASS */
       .box {
         /*FIXME: Add shared functionality (e.g. click sound) for boxes */
         margin: 0 0 10px 0;
+        min-height: 400px;
         font-size: 18px;
         width: 300px;
         float: left;

@@ -18,7 +18,7 @@
         
 
     </head>
-    <body>
+    <body >
       <!-- ALL THE NAVBAR CODE -->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <a class="navbar-brand" href="/">Classroom Creator</a>
@@ -47,14 +47,7 @@
     <!--CSV CHECKBOX-->
     <!-- If a CSV has NOT been uploaded, box is checkable. Box will change the text in Canvas Box b/w CSV Uploader OR Canvas Sign-in Button -->
     <!-- If a CSV HAS BEEN UPLOADED, checkbox is DISABLED. (might want to change later). -->
-    {%if csvUploadSuccess == False %}
-      <input type="checkbox" id="enable_uploads" onchange="changeCanvasBox(this)"/> 
-      <label for='enable_uploads'> Upload CSV (Experienced Users Only) </label>
-    {% endif %}
-    {%if csvUploadSuccess == True %} 
-      <input type="checkbox" id="enable_uploads" onchange="changeCanvasBox(this)" disabled/> 
-      <label for='enable_uploads'> Upload CSV (Experienced Users Only) </label>
-    {% endif %}
+    
     <br>
     
     <!-- BOOTSTRAP GRID ORGANIZATION: (MAIN APPLICATION COMPONENTS) -->
@@ -63,28 +56,45 @@
       <!-- (B1) CANVAS SIGN IN BOX: have to add the proper button-->
       <!-- Canvas Component Spans 5 Columns. -->
       <div class="col-3-">
-        
+        {%if csvUploadSuccess == False %}
+        <div class="form-check form-switch">
+          <input type="checkbox" id="enable_uploads" /> 
+          <label for='enable_uploads'> Upload CSV </label>
+        </div>
+          
+      {% endif %}
+      {%if csvUploadSuccess == True %} 
+      <div class="form-check form-switch">
+        <input type="checkbox" id="enable_uploads" disabled/> 
+        <label for='enable_uploads'> Upload CSV </label>
+      </div>
+      {% endif %}
+      
         <!-- Canvas sign-in OR CSV Upload Box. -->
         
         <div class="box">
           {%if csvUploadSuccess == False%}
           <img src="static/assets/canvas.png" class="img-fluid canvas-login">
-          <div >
+          
           <button type="button" class="btn btn-outline-secondary canvas-login">Login</button>
               <!-- If Checkbox is clicked, display: -->
               <div id="uploads">
-              <form id="uploadCSV" method='POST' enctype ='multipart/form-data'>
-                {{ form.hidden_tag() }}
-                {{ form.file() }}
-                {{ form.submit() }}
-              </form>
+                <form id="uploadCSV" method='POST' enctype ='multipart/form-data' class="form-control-md pt-5">
+                  <div class="form-group">
+                    {{ form.hidden_tag() }}
+                    {{ form.file(class_="mx-auto")}}
+                  </div>
+                  <div class="form-group">
+                    {{ form.submit(class_="") }}
+                  </div>
+                  
+                </form>
               </div>
           {% endif %}
           {% if csvUploadSuccess == True %}
-              <label id="canvasSignInBoxText"> Uploaded CSV: </label>
-                {{filename}}
+              <label id="canvasSignInBoxText" class="pt-5"> Uploaded CSV: </label>
+                <span  class="font-weight-bold">{{filename}}</span> 
           {% endif %}
-        </div>
         </div>
       </div>
 
@@ -92,7 +102,12 @@
       <div class="col-2 d-flex justify-content-center">
         <div class="d-flex align-items-center">       
           <span class="align-items-center">
-            <button type="button" class="btn btn-primary" disabled>Migrate Classrooms</button>
+            {% if csvUploadSuccess == True %}
+            <button type="button" class="btn btn-primary" >Migrate Classrooms</button>
+            {% endif %}
+            {% if csvUploadSuccess == False %}
+            <button type="button" class="btn btn-secondary" disabled>Migrate Classrooms</button>
+            {% endif %}
           </span>
         </div>      
       </div>
@@ -102,15 +117,13 @@
           <!-- (B2 GOOGLE SIGN IN BOX)
             Add functionality-->
       <div class="box  ">
-        <img src="static/assets/g-classroom.png" class="img-fluid canvas-login">
+        <img src="static/assets/g-classroom.png" class="img-fluid">
         <div class="border boreder-secondary">
         <ul class="list-group list-group-flush" id="google-courses">
-          <li class="list-group-item">English I - Period 1</li>
-          <li class="list-group-item">Math 2 - Period 4</li>
         </ul>
         </div>
       </div>
-    </div>
+      </div>
     </div> <!-- End of 1st row div. -->
 
     <!-- Beginning of Row 2: (Buttons) -->
@@ -121,7 +134,11 @@
         <div class=" box ">
           <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
           {%if csvUploadSuccess %}
-            <label id= "canvasStatusBar"> CSV data received </label>
+          <button type="button" class="btn btn-outline-success" disabled>
+            <span class="position-relative text-secondary">
+              Ready
+              <span class="badge badge-sm badge-success rounded-circle ml-2 text-success">6</span>
+            </span>
             {% endif %}
           {% if csvUploadSuccess == False %} 
           <button type="button" class="btn btn-outline-danger" disabled>
