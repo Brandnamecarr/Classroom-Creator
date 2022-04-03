@@ -19,7 +19,6 @@ Scopes = ["https://www.googleapis.com/auth/classroom.courses", "https://www.goog
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
-app.config['SECRET_KEY'] ='supersecretkey'
 
 # class for uploading a file upload form.
 class UploadFileForm(FlaskForm):

@@ -2,7 +2,9 @@
 $(document).ready(function(){
   $('#uploads').hide();
   $('#enable_uploads').change(function(){
-      $('#uploads').toggle()
+      $('#uploads').toggle();
+      console.log("hide");
+      $('#canvas-login').hide();
   });
 });
 

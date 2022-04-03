@@ -58,16 +58,19 @@
     <br>
     
     <!-- BOOTSTRAP GRID ORGANIZATION: (MAIN APPLICATION COMPONENTS) -->
-    <div class="row"> <!-- Row 1 -->
+    <div class="d-flex justify-content-center"> <!-- Row 1 -->
 
       <!-- (B1) CANVAS SIGN IN BOX: have to add the proper button-->
       <!-- Canvas Component Spans 5 Columns. -->
-      <div class="col-5">
+      <div class="col-3-">
         
         <!-- Canvas sign-in OR CSV Upload Box. -->
-        <div class="box canvasSignInBox">
+        
+        <div class="box">
           {%if csvUploadSuccess == False%}
-          <label id="canvasSignInBoxText"> Sign in With Canvas </label>
+          <img src="static/assets/canvas.png" class="img-fluid canvas-login">
+          <div >
+          <button type="button" class="btn btn-outline-secondary canvas-login">Login</button>
               <!-- If Checkbox is clicked, display: -->
               <div id="uploads">
               <form id="uploadCSV" method='POST' enctype ='multipart/form-data'>
@@ -82,40 +85,51 @@
                 {{filename}}
           {% endif %}
         </div>
+        </div>
       </div>
 
       <!-- Want the Migrate Button to Span 2 Columns -->
-      <div class="col-2">
-         <!--MIGRATE BUTTON 
-                Add funcionality-->
-                <button class="migratebutton" style="margin-top: 150px;" disabled>
-                 Migrate Data
-                </button>
+      <div class="col-2 d-flex justify-content-center">
+        <div class="d-flex align-items-center">       
+          <span class="align-items-center">
+            <button type="button" class="btn btn-primary" disabled>Migrate Classrooms</button>
+          </span>
+        </div>      
       </div>
 
       <!-- Want Google Component to Span 5 columns. -->
-      <div class="col-5 justify-contents:right">
+      <div class="col-3- justify-contents:right">
           <!-- (B2 GOOGLE SIGN IN BOX)
             Add functionality-->
-      <div class="box googleSignInBox">
-        <!-- Need to change the onsucess to the function to triggle the text change in the status bar. -->
-        <a class="button" href="/google_login">Google Login</a>
+      <div class="box  ">
+        <img src="static/assets/g-classroom.png" class="img-fluid canvas-login">
+        <div class="border boreder-secondary">
+        <ul class="list-group list-group-flush" id="google-courses">
+          <li class="list-group-item">English I - Period 1</li>
+          <li class="list-group-item">Math 2 - Period 4</li>
+        </ul>
+        </div>
       </div>
     </div>
     </div> <!-- End of 1st row div. -->
 
     <!-- Beginning of Row 2: (Buttons) -->
-    <div class="row">
+    <div class="d-flex justify-content-center">
       
       <!-- (B3 CANVAS STATUS BAR) -->
-      <div class="col-5">
-        <div class=" box canvasStatusBar">
+      <div class="col-3-">
+        <div class=" box ">
           <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
           {%if csvUploadSuccess %}
             <label id= "canvasStatusBar"> CSV data received </label>
             {% endif %}
           {% if csvUploadSuccess == False %} 
-            <label id="canvasStatusBar"> Canvas Not Ready
+          <button type="button" class="btn btn-outline-danger" disabled>
+          <span class="position-relative text-secondary">
+            Not Ready
+            <span class="badge badge-sm badge-danger rounded-circle ml-2 text-danger">6</span>
+          </span>
+         </button>
           {% endif %}
         </div>
       </div>
@@ -124,26 +138,23 @@
       <div class="col-2"></div>
 
       <!-- Google Status Bar (Add functionality). -->
-      <div class="col-5">
-          <div class="box googleStatusBar">
-            <!--Add functionality; Change to green success display upon Google sign in with new message -->
-            GOOGLE NOT READY
+      <div class="col-3-">
+          <div class="box ">
+            <button type="button" class="btn btn-outline-success" disabled>
+              <span class="position-relative text-secondary">
+                Ready
+                <span class="badge badge-sm badge-success rounded-circle ml-2 text-success">6</span>
+              </span>
+             </button>
+            <button type="button" class="btn btn-info">Switch User</button>
         </div>
       </div> <!-- End of Last column to the right -->
     </div> <!-- End of Row 2 -->
   
-    <!-- Reference to documentation page -->
-    <div style="clear:both;">
-      <a href="docs">First time user?  Click here for tutorial</a>
-    </div>
-
-
-
-
 </body> <!-- End of Application Page -->
     
   <!-- FOOTER COMPONENT -->
-  <footer> 
+  <footer class="footer"> 
     <p1> Developed by Team 9 From Outer Space</p1>
     <p1> @ The University of Florida, CEN 3031, Spring 2022</p1>
     <p1> </p1>
