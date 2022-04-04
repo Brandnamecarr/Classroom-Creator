@@ -7,3 +7,7 @@ footer {
     height: 60px;
     width: 100%;
 }
+
+.h1, .h3, .p, .div, .body {
+    font-family: 'Questrial', sans-serif;
+}
