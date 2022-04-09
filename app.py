@@ -9,6 +9,8 @@ from wtforms import FileField, SubmitField
 from wtforms.validators import InputRequired
 from werkzeug.utils import secure_filename
 from csv_service import CsvDataPoint, csv_service
+from canvasapi import Canvas
+from classroom import Classroom
 
 # needed to imitate https server
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -27,20 +29,37 @@ class UploadFileForm(FlaskForm):
     submit = SubmitField("Upload")
 
 @app.route("/", methods=['GET', 'POST'])
-@app.route("/home", methods=['GET', 'POST'])
 def home():
-    if 'credentials' not in session:
-        return redirect('google_login')
     csvUploadSuccess = False
     form = UploadFileForm()
-    if form.validate_on_submit():
+
+    if 'credentials' not in session:
+        return redirect('google_login')
+    
+    if 'canvas-url' in session and 'canvas-api-key' in session:
+        return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=True)
+    elif form.validate_on_submit():
         file = form.file.data # First grab the file
         file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) # Then save the file
         csvUploadSuccess = True
-        return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename)
-    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess)   
+        return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename, canvas=False)
+    
+    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)   
 
-# login process to access google api
+####################
+##### CSV APIS #####
+####################
+@app.route("/cancel_csv", methods=['GET', 'POST'])
+def cancel_csv():
+    if request.method == 'POST':
+        post_data = request.form['file']
+        os.remove(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles',secure_filename(post_data)))
+
+    return redirect("/")
+
+#############################
+##### GOOGLE OAUTH APIS #####
+#############################
 @app.route("/google_login")
 def google_login():
     "loging in page"
@@ -98,6 +117,7 @@ def create_google_classrooms():
         courses = results.get('courses', [])
         return jsonify(courses)
 
+# to be used as
 @app.route("/get_current_google_classrooms")
 def get_current_google_classrooms():
     creds = google.oauth2.credentials.Credentials(**session['credentials'])
@@ -105,6 +125,59 @@ def get_current_google_classrooms():
     results = service.courses().list().execute()
     courses = results.get('courses', [])
     return jsonify(courses)
+
+@app.route("/google_logout")
+def google_logout():
+    session.pop('credentials', None)
+    return redirect("/google_login")
+
+#############################
+##### CANVAS OAUTH APIS #####
+#############################
+@app.route("/canvas_connect", methods=['GET', 'POST'])
+def canvas_connect():
+    if request.method == 'POST':
+        url = request.form['url']
+        api_key = request.form['api-key']
+        session['canvas-url'] = url
+        session['canvas-api-key'] = api_key
+        return redirect('/')
+
+@app.route("/canvas_disconnect")
+def canvas_disconnect():
+    session.pop('canvas-url', None)
+    session.pop('canvas-api-key', None)
+    return redirect('/')
+
+@app.route("/get_canvas_courses_names")
+def get_course_names():
+    courses = get_canvas_courses()
+    result = []
+    for course in courses:
+        result.append({
+            'course_name' : course.course_name,
+            'course_section' : course.course_section})
+    
+    return jsonify(result)
+
+def get_canvas_courses():
+    canvas_api = Canvas(session['canvas-url'], session['canvas-api-key'])
+    tmp_courses = canvas_api.get_courses()
+    courses = []
+    for course in tmp_courses:
+        sections = course.get_sections()
+        for sec in sections:
+            students = [x.user['name'] for x in (sec.get_enrollments(type=['StudentEnrollment']))]
+            courses.append(Classroom(course.name, sec.name, students))
+    
+    return courses
+            
+
+
+
+###########################
+##### OTHER PAGE APIS #####
+###########################
 
 @app.route("/about")
 def about():
@@ -114,6 +187,10 @@ def about():
 def docs():
     return render_template('docs.html')
 
+############################
+##### HELPER FUNCTIONS #####
+############################
+
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
           'refresh_token': credentials.refresh_token,
@@ -122,4 +199,8 @@ def credentials_to_dict(credentials):
           'client_secret': credentials.client_secret,
           'scopes': credentials.scopes}
 
+
+###################################
+##### APPLICATION ENTRY POINT #####
+###################################
 app.run(debug=True)
