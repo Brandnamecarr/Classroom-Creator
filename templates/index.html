@@ -56,44 +56,73 @@
       <!-- (B1) CANVAS SIGN IN BOX: have to add the proper button-->
       <!-- Canvas Component Spans 5 Columns. -->
       <div class="col-3-">
-        {%if csvUploadSuccess == False %}
-        <div class="form-check form-switch">
+        {%if csvUploadSuccess == False and canvas == false %}
+        <div class="form-check form-switch csv-checkbox" >
           <input type="checkbox" id="enable_uploads" /> 
           <label for='enable_uploads'> Upload CSV </label>
         </div>
-          
-      {% endif %}
-      {%if csvUploadSuccess == True %} 
-      <div class="form-check form-switch">
-        <input type="checkbox" id="enable_uploads" disabled/> 
-        <label for='enable_uploads'> Upload CSV </label>
-      </div>
-      {% endif %}
+        {% endif %}
       
         <!-- Canvas sign-in OR CSV Upload Box. -->
         
         <div class="box">
-          {%if csvUploadSuccess == False%}
+          {%if csvUploadSuccess == False and canvas == False%}
           <img src="static/assets/canvas.png" class="img-fluid canvas-login">
           
-          <button type="button" class="btn btn-outline-secondary canvas-login">Login</button>
+          <button type="button" class="btn btn-outline-danger canvas-login" id="canvas-connect">Connect</button>
               <!-- If Checkbox is clicked, display: -->
-              <div id="uploads">
-                <form id="uploadCSV" method='POST' enctype ='multipart/form-data' class="form-control-md pt-5">
+              <div id="uploads" class="text-left">
+                <form id="uploadCSV" method='POST' enctype ='multipart/form-data' class="form-control">
                   <div class="form-group">
                     {{ form.hidden_tag() }}
                     {{ form.file(class_="mx-auto")}}
                   </div>
                   <div class="form-group">
-                    {{ form.submit(class_="") }}
+                    {{ form.submit(class_="btn btn-success") }}
                   </div>
                   
                 </form>
               </div>
+              <div id="canvas-form" class="text-left">
+                <form id="canvas-auth" method='POST' action="/canvas_connect" enctype ='multipart/form-data' class="form-control-md pt-5">
+                  <form class="form-signin">
+                    <div class="form-group">
+                      <h1 class="h3 mb-3 font-weight-normal">Canvas API Connect</h1>
+                    </div>
+                    <div class="form-group">
+                    <label for="canvas-domain">Canvas Domain URL </label>
+                    <input type="url" name="url" id="canvas-domain" class="form-control" placeholder="Canvas Domain" required autofocus>
+                    <small id="urlHelp" class="form-text text-muted">Example: canvas.instructure.com</small>
+                    </div>
+                    <div class="form-group">
+                    <label for="api-key">API Key</label>
+                    <input type="password" name="api-key" id="api-key" class="form-control" placeholder="API Key" required>
+                    <small id="urlHelp" class="form-text text-muted">Help: 
+                      <a href="https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-manage-API-access-tokens-as-an-instructor/ta-p/1177" target="_blank">Instructor API Access Token</a>
+                    </small>
+                    <small id="urlHelp" class="form-text text-muted">Help: 
+                    <a href="https://community.canvaslms.com/t5/Admin-Guide/How-do-I-add-a-developer-API-key-for-an-account/ta-p/259" target="_blank">LTI Devoloper Key</a>
+                    </small>
+                    
+                    </div>
+                    <div class="form-group">
+                    <button class="btn btn-md btn-success" type="submit" id="connect-canvas">Connect</button>
+                    <button class="btn btn-md btn-danger" type="button" id="cancel-connect">Cancel</button>
+                    </div>
+                  </form>
+                </form>
+              </div>
           {% endif %}
           {% if csvUploadSuccess == True %}
-              <label id="canvasSignInBoxText" class="pt-5"> Uploaded CSV: </label>
-                <span  class="font-weight-bold">{{filename}}</span> 
+            <label id="canvasSignInBoxText" class="pt-5"> Uploaded CSV: </label>
+            <span class="font-weight-bold" id="filename">{{filename}}</span>             
+          {% endif %}
+          {% if canvas == True %}
+          <img src="static/assets/canvas.png" class="img-fluid">
+            <div class="border boreder-secondary">
+            <ul class="list-group list-group-flush" id="canvas-courses">
+            </ul>
+            </div>
           {% endif %}
         </div>
       </div>
@@ -102,10 +131,13 @@
       <div class="col-2 d-flex justify-content-center">
         <div class="d-flex align-items-center">       
           <span class="align-items-center">
-            {% if csvUploadSuccess == True %}
-            <button type="button" class="btn btn-primary" >Migrate Classrooms</button>
+            {% if canvas == True %}
+            <button type="button" class="btn btn-primary" id="migrate_canvas">Migrate Classrooms</button>
             {% endif %}
-            {% if csvUploadSuccess == False %}
+            {% if csvUploadSuccess == True %}
+            <button type="button" class="btn btn-primary" id="migrate_csv">Migrate Classrooms</button>
+            {% endif %}
+            {% if csvUploadSuccess == False and canvas == False %}
             <button type="button" class="btn btn-secondary" disabled>Migrate Classrooms</button>
             {% endif %}
           </span>
@@ -117,7 +149,7 @@
           <!-- (B2 GOOGLE SIGN IN BOX)
             Add functionality-->
       <div class="box  ">
-        <img src="static/assets/g-classroom.png" class="img-fluid">
+        <img src="static/assets/g-classroom.png" class="img-fluid" >
         <div class="border boreder-secondary">
         <ul class="list-group list-group-flush" id="google-courses">
         </ul>
@@ -133,14 +165,24 @@
       <div class="col-3-">
         <div class=" box ">
           <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
-          {%if csvUploadSuccess %}
+          {%if csvUploadSuccess == True or canvas == True%}
           <button type="button" class="btn btn-outline-success" disabled>
             <span class="position-relative text-secondary">
               Ready
               <span class="badge badge-sm badge-success rounded-circle ml-2 text-success">6</span>
             </span>
-            {% endif %}
-          {% if csvUploadSuccess == False %} 
+          {% endif %}
+          {%if csvUploadSuccess == True %}
+          <button type="button" class="btn btn-outline-danger ml-1" id="cancel-csv" >
+            Cancel
+          </button>
+          {% endif %}
+          {%if canvas == True %}
+          <button type="button" class="btn btn-outline-danger ml-1" id="cancel-canvas" >
+            Cancel
+          </button>
+          {% endif %}
+          {% if csvUploadSuccess == False and canvas == False %} 
           <button type="button" class="btn btn-outline-danger" disabled>
           <span class="position-relative text-secondary">
             Not Ready
@@ -162,6 +204,9 @@
                 Ready
                 <span class="badge badge-sm badge-success rounded-circle ml-2 text-success">6</span>
               </span>
+             </button>
+             <button type="button" class="btn btn-outline-success" id="switch-user" >
+              Switch User
              </button>
         </div>
       </div> <!-- End of Last column to the right -->
