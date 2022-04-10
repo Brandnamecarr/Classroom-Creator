@@ -1,3 +1,5 @@
+import json
+
 class Classroom():
 
     def __init__(self, course_name : str, course_section : str, students : 'list[str]'):
@@ -40,16 +42,20 @@ class Classroom():
         course = {
             'name' : self._course_name,
             'section' : self._course_section,
+            'ownerId': 'me',
         }
 
         return course
     
-    def enroll_students_format(self):
+    def enroll_students_format(self, courseID):
         students = []
 
         for s in self._students:
             students.append({
-                'userID' : s
+                "courseId" : courseID,
+                "id" : "me",   
+                "role" : "STUDENT",
+                "userId" : s                
             })
         
         return students

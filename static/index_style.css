@@ -16,7 +16,9 @@
       }
 
       img {
-        max-height: 168;
+        max-height: 168px;
+        height:auto;
+        width:auto;
       }
 
       /* (B) BOX VARIATIONS */
@@ -81,4 +83,8 @@
         bottom: 0;
         height: 60px;
         width: 100%;
+    }
+
+    .uploads {
+      max-height: 300px;
     }

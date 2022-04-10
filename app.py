@@ -4,6 +4,7 @@ import os
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
+from googleapiclient.errors import HttpError
 from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField
 from wtforms.validators import InputRequired
@@ -100,23 +101,6 @@ def google_success():
 
     return redirect("/")
 
-@app.route("/create_google_classrooms", methods = ['POST', 'GET'])
-def create_google_classrooms():
-    if 'credentials' not in session:
-        return redirect('google_login')
-    else:
-        creds = google.oauth2.credentials.Credentials(**session['credentials'])
-    
-        service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
-
-        if request.method == 'POST':
-            post_data = request.form['data']
-            # TODO this is where classroom objects are created and classrooms are created
-        
-        results = service.courses().list().execute()
-        courses = results.get('courses', [])
-        return jsonify(courses)
-
 # to be used as
 @app.route("/get_current_google_classrooms")
 def get_current_google_classrooms():
@@ -124,6 +108,7 @@ def get_current_google_classrooms():
     service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
     results = service.courses().list().execute()
     courses = results.get('courses', [])
+        
     return jsonify(courses)
 
 @app.route("/google_logout")
@@ -166,14 +151,54 @@ def get_canvas_courses():
     courses = []
     for course in tmp_courses:
         sections = course.get_sections()
+        users = course.get_users()
         for sec in sections:
-            students = [x.user['name'] for x in (sec.get_enrollments(type=['StudentEnrollment']))]
-            courses.append(Classroom(course.name, sec.name, students))
+            students = [x.user['id'] for x in (sec.get_enrollments(type=['StudentEnrollment']))]
+            emails = []
+            for user in users:
+                if user.id in students:
+                    emails.append(user.email)
+            
+            courses.append(Classroom(course.name, sec.name, emails))
     
     return courses
-            
+
+def upload_courses_to_google(courses):
+    creds = google.oauth2.credentials.Credentials(**session['credentials'])
+    service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
+
+    for course in courses:
+        # create course
+        body = course.create_course_format()
+        g_course = service.courses().create(body=body).execute()
+        # enroll students to course
+        students = course.enroll_students_format(g_course.get('id'))
+        for s in students:
+            print(s)
+            g_student = service.invitations().create(body=s).execute()
 
 
+########################
+##### Migrate APIs #####
+########################
+
+@app.route("/migrate_canvas")
+def migrate_canvas():
+    # security feature to prevent users bypassing logins
+    if 'credentials' not in session:
+        return redirect('google_login')
+    elif 'canvas-url' not in session and 'canvas-api-key' not in session:
+        return redirect('/')
+    
+    # gather classroom objects of canvas courses
+    courses = get_canvas_courses()
+
+    try:
+        upload_courses_to_google(courses)
+    except HttpError as error:
+        print(error)
+
+    return "success"
 
 ###########################
 ##### OTHER PAGE APIS #####
