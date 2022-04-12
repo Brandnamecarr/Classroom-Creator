@@ -1,3 +1,4 @@
+import csv
 from flask import Flask, render_template, request, session, abort, redirect, jsonify, url_for
 from datetime import datetime
 import os
@@ -20,6 +21,9 @@ Scopes = ["https://www.googleapis.com/auth/classroom.courses", "https://www.goog
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
 
+# Global string for csv filename
+csvFileName = ""
+
 # class for uploading a file upload form.
 class UploadFileForm(FlaskForm):
     # creates buttons with these names. 
@@ -35,10 +39,30 @@ def home():
     form = UploadFileForm()
     if form.validate_on_submit():
         file = form.file.data # First grab the file
-        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) # Then save the file
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) 
+        # Then save the file
         csvUploadSuccess = True
+<<<<<<< Updated upstream
         return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename)
     return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess)   
+=======
+        csvFileName = file.filename
+
+        return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename, canvas=False)
+    
+    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)   
+
+####################
+##### CSV APIS #####
+####################
+@app.route("/cancel_csv", methods=['GET', 'POST'])
+def cancel_csv():
+    if request.method == 'POST':
+        post_data = request.form['file']
+        os.remove(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles',secure_filename(post_data)))
+
+    return redirect("/")
+>>>>>>> Stashed changes
 
 # login process to access google api
 @app.route("/google_login")
@@ -106,6 +130,121 @@ def get_current_google_classrooms():
     courses = results.get('courses', [])
     return jsonify(courses)
 
+<<<<<<< Updated upstream
+=======
+@app.route("/google_logout")
+def google_logout():
+    session.pop('credentials', None)
+    return redirect("/google_login")
+
+#############################
+##### CANVAS OAUTH APIS #####
+#############################
+@app.route("/canvas_connect", methods=['GET', 'POST'])
+def canvas_connect():
+    if request.method == 'POST':
+        url = request.form['url']
+        api_key = request.form['api-key']
+        session['canvas-url'] = url
+        session['canvas-api-key'] = api_key
+        return redirect('/')
+
+@app.route("/canvas_disconnect")
+def canvas_disconnect():
+    session.pop('canvas-url', None)
+    session.pop('canvas-api-key', None)
+    return redirect('/')
+
+@app.route("/get_canvas_courses_names")
+def get_course_names():
+    courses = get_canvas_courses()
+    result = []
+    for course in courses:
+        result.append({
+            'course_name' : course.course_name,
+            'course_section' : course.course_section})
+    
+    return jsonify(result)
+
+def get_canvas_courses():
+    canvas_api = Canvas(session['canvas-url'], session['canvas-api-key'])
+    tmp_courses = canvas_api.get_courses()
+    courses = []
+    for course in tmp_courses:
+        sections = course.get_sections()
+        users = course.get_users()
+        for sec in sections:
+            students = [x.user['id'] for x in (sec.get_enrollments(type=['StudentEnrollment']))]
+            emails = []
+            for user in users:
+                if user.id in students:
+                    emails.append(user.email)
+            
+            courses.append(Classroom(course.name, sec.name, emails))
+    
+    return courses
+
+def upload_courses_to_google(courses):
+    creds = google.oauth2.credentials.Credentials(**session['credentials'])
+    service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
+
+    for course in courses:
+        # create course
+        body = course.create_course_format()
+        g_course = service.courses().create(body=body).execute()
+        # enroll students to course
+        students = course.enroll_students_format(g_course.get('id'))
+        for s in students:
+            print(s)
+            g_student = service.invitations().create(body=s).execute()
+
+
+########################
+##### Migrate APIs #####
+########################
+
+@app.route("/migrate_canvas")
+def migrate_canvas():
+    # security feature to prevent users bypassing logins
+    if 'credentials' not in session:
+        return redirect('google_login')
+    elif 'canvas-url' not in session and 'canvas-api-key' not in session:
+        return redirect('/')
+    
+    # gather classroom objects of canvas courses
+    courses = get_canvas_courses()
+
+    try:
+        upload_courses_to_google(courses)
+    except HttpError as error:
+        print(error)
+
+    return "success"
+
+@app.route("/migrate_csv")
+def migrate_csv():
+    # security feature to prevent users bypassing logins
+    if 'credentials' not in session:
+        return redirect('google_login')
+    
+    csvObject = csv_service(csvFileName)
+
+    # gather classroom objects of courses from csv
+    courseInfo, students = csvObject.get_from_csv()
+    newClass = Classroom(courseInfo[0], courseInfo[1], students)
+
+    try:
+        upload_courses_to_google(newClass)
+    except HttpError as error:
+        print(error)
+
+    return "success"
+
+###########################
+##### OTHER PAGE APIS #####
+###########################
+
+>>>>>>> Stashed changes
 @app.route("/about")
 def about():
     return render_template('about.html')
