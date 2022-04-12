@@ -12,8 +12,6 @@ $(document).ready(function() {
   $('#googleConnected').change(function() {
     $('#googleSuccessBar').toggle()
   });
-<<<<<<< Updated upstream
-=======
 
   $( '#migrate-csv' ).click(function() {
     migratecsv();
@@ -21,7 +19,6 @@ $(document).ready(function() {
   
   getGoogleClassroomData();
   getCanvasClassroomData();
->>>>>>> Stashed changes
 });
 
 

@@ -9,7 +9,10 @@ from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField
 from wtforms.validators import InputRequired
 from werkzeug.utils import secure_filename
+from classroom import Classroom
+from canvasapi import Canvas
 from csv_service import CsvDataPoint, csv_service
+from googleapiclient.errors import HttpError
 
 # needed to imitate https server
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -33,24 +36,23 @@ class UploadFileForm(FlaskForm):
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
 def home():
-    if 'credentials' not in session:
-        return redirect('google_login')
     csvUploadSuccess = False
     form = UploadFileForm()
-    if form.validate_on_submit():
-        file = form.file.data # First grab the file
-        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) 
-        # Then save the file
-        csvUploadSuccess = True
-<<<<<<< Updated upstream
-        return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename)
-    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess)   
-=======
-        csvFileName = file.filename
 
+    if 'credentials' not in session:
+        return redirect('google_login')
+    
+    if 'canvas-url' in session and 'canvas-api-key' in session:
+        return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=True)
+    elif form.validate_on_submit():
+        file = form.file.data # First grab the file
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) # Then save the file
+        csvUploadSuccess = True
+        csvFileName = file.filename
         return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename, canvas=False)
     
-    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)   
+    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)
+
 
 ####################
 ##### CSV APIS #####
@@ -62,7 +64,6 @@ def cancel_csv():
         os.remove(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles',secure_filename(post_data)))
 
     return redirect("/")
->>>>>>> Stashed changes
 
 # login process to access google api
 @app.route("/google_login")
@@ -130,8 +131,6 @@ def get_current_google_classrooms():
     courses = results.get('courses', [])
     return jsonify(courses)
 
-<<<<<<< Updated upstream
-=======
 @app.route("/google_logout")
 def google_logout():
     session.pop('credentials', None)
@@ -244,7 +243,6 @@ def migrate_csv():
 ##### OTHER PAGE APIS #####
 ###########################
 
->>>>>>> Stashed changes
 @app.route("/about")
 def about():
     return render_template('about.html')
