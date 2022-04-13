@@ -1,19 +1,20 @@
+import json
+
 class Classroom():
 
-    def __init__(self, course_id : str, course_name : str, teacher : str, students : 'list[str]'):
-        self._course_id = course_id
+    def __init__(self, course_name : str, course_section : str, students : 'list[str]'):
+        self._course_section = course_section
         self._course_name = course_name
-        self._teacher = teacher
         self._students = students
     
     # Getter and Setter Functions for class properties
     @property
-    def course_id(self) -> str:
-        return self._course_id
+    def course_section(self) -> str:
+        return self._course_section
     
-    @course_id.setter
-    def course_id(self, id : str) -> None:
-        self._course_id = id
+    @course_section.setter
+    def course_section(self, id : str) -> None:
+        self._course_section = id
     
     @property
     def course_name(self) -> str:
@@ -22,14 +23,6 @@ class Classroom():
     @course_name.setter
     def course_name(self, name : str) -> None:
         self._course_name = name
-    
-    @property
-    def teacher(self) -> str:
-        return self._teacher
-    
-    @teacher.setter
-    def teacher(self, new_teacher : str) -> None:
-        self._teacher = new_teacher
     
     @property
     def students(self) -> 'list[str]':
@@ -46,7 +39,23 @@ class Classroom():
 
     # TODO - Create format data for Google classroom in format if needed
     def create_course_format(self):
-        pass
+        course = {
+            'name' : self._course_name,
+            'section' : self._course_section,
+            'ownerId': 'me',
+        }
 
+        return course
+    
+    def enroll_students_format(self, courseID):
+        students = []
 
-    # TODO - Identify canvas import stategy
+        for s in self._students:
+            students.append({
+                "courseId" : courseID,
+                "id" : "me",   
+                "role" : "STUDENT",
+                "userId" : s                
+            })
+        
+        return students

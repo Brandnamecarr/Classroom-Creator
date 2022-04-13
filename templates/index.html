@@ -3,14 +3,21 @@
         <!-- importing style sheet-->
         <link rel="stylesheet" href="/static/index_style.css">
 
+        
         <!-- importing google ajax api -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <!-- importing Bootstrap library -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <!-- toggle switch library -->
+        <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
+        <script src="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/js/bootstrap4-toggle.min.js"></script>
 
         <!-- importing JS code -->
         <script src="/static/index.js"></script>
 
-        <!-- importing Bootstrap library -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         
         <!-- Adding a title to the main page-->
         <title> Home </title>
@@ -56,44 +63,64 @@
       <!-- (B1) CANVAS SIGN IN BOX: have to add the proper button-->
       <!-- Canvas Component Spans 5 Columns. -->
       <div class="col-3-">
-        {%if csvUploadSuccess == False %}
-        <div class="form-check form-switch">
-          <input type="checkbox" id="enable_uploads" /> 
-          <label for='enable_uploads'> Upload CSV </label>
-        </div>
-          
-      {% endif %}
-      {%if csvUploadSuccess == True %} 
-      <div class="form-check form-switch">
-        <input type="checkbox" id="enable_uploads" disabled/> 
-        <label for='enable_uploads'> Upload CSV </label>
-      </div>
-      {% endif %}
-      
-        <!-- Canvas sign-in OR CSV Upload Box. -->
         
+      <!-- Canvas sign-in OR CSV Upload Box. -->
         <div class="box">
-          {%if csvUploadSuccess == False%}
+          {%if csvUploadSuccess == False and canvas == False%}
           <img src="static/assets/canvas.png" class="img-fluid canvas-login">
           
-          <button type="button" class="btn btn-outline-secondary canvas-login">Login</button>
+          <button type="button" class="btn btn-outline-danger canvas-login" id="canvas-connect">Connect</button>
               <!-- If Checkbox is clicked, display: -->
-              <div id="uploads">
-                <form id="uploadCSV" method='POST' enctype ='multipart/form-data' class="form-control-md pt-5">
+              <div id="uploads" class="text-left mt-5">
+                
+                <form id="uploadCSV" method='POST' enctype ='multipart/form-data' class="form-control">
                   <div class="form-group">
                     {{ form.hidden_tag() }}
                     {{ form.file(class_="mx-auto")}}
                   </div>
                   <div class="form-group">
-                    {{ form.submit(class_="") }}
+                    {{ form.submit(class_="btn btn-success") }}
                   </div>
                   
                 </form>
               </div>
+              <div id="canvas-form" class="text-left">
+                <form id="canvas-auth" method='POST' action="/canvas_connect" enctype ='multipart/form-data' class="form-control-md pt-5">
+                  <form class="form-signin">
+                    <div class="form-group">
+                      <h1 class="h3 mb-3 font-weight-normal">Canvas API Connect</h1>
+                    </div>
+                    <div class="form-group">
+                    <label for="canvas-domain">Canvas Domain URL </label>
+                    <input type="url" name="url" id="canvas-domain" class="form-control" placeholder="Canvas Domain" required autofocus>
+                    <small id="urlHelp" class="form-text text-muted">Example: canvas.instructure.com</small>
+                    </div>
+                    <div class="form-group">
+                    <label for="api-key">API Key</label>
+                    <input type="password" name="api-key" id="api-key" class="form-control" placeholder="API Key" required>
+                    <small id="urlHelp" class="form-text text-muted">Help: 
+                      <a href="https://community.canvaslms.com/t5/Instructor-Guide/How-do-I-manage-API-access-tokens-as-an-instructor/ta-p/1177" target="_blank">Instructor API Access Token</a>
+                    </small>
+                                        
+                    </div>
+                    <div class="form-group">
+                    <button class="btn btn-md btn-success" type="submit" id="connect-canvas">Connect</button>
+                    <button class="btn btn-md btn-danger" type="button" id="cancel-connect">Cancel</button>
+                    </div>
+                  </form>
+                </form>
+              </div>
           {% endif %}
           {% if csvUploadSuccess == True %}
-              <label id="canvasSignInBoxText" class="pt-5"> Uploaded CSV: </label>
-                <span  class="font-weight-bold">{{filename}}</span> 
+            <label id="canvasSignInBoxText" class="pt-5"> Uploaded CSV: </label>
+            <span class="font-weight-bold" id="filename">{{filename}}</span>             
+          {% endif %}
+          {% if canvas == True %}
+          <img src="static/assets/canvas.png" class="img-fluid">
+            <div class="border boreder-secondary">
+            <ul class="list-group list-group-flush" id="canvas-courses">
+            </ul>
+            </div>
           {% endif %}
         </div>
       </div>
@@ -102,10 +129,13 @@
       <div class="col-2 d-flex justify-content-center">
         <div class="d-flex align-items-center">       
           <span class="align-items-center">
-            {% if csvUploadSuccess == True %}
-            <button type="button" class="btn btn-primary" >Migrate Classrooms</button>
+            {% if canvas == True %}
+            <button type="button" class="btn btn-primary" id="migrate-canvas">Migrate Classrooms</button>
             {% endif %}
-            {% if csvUploadSuccess == False %}
+            {% if csvUploadSuccess == True %}
+            <button type="button" class="btn btn-primary" id="migrate-csv">Migrate Classrooms</button>
+            {% endif %}
+            {% if csvUploadSuccess == False and canvas == False %}
             <button type="button" class="btn btn-secondary" disabled>Migrate Classrooms</button>
             {% endif %}
           </span>
@@ -114,12 +144,12 @@
 
       <!-- Want Google Component to Span 5 columns. -->
       <div class="col-3- justify-contents:right">
-          <!-- (B2 GOOGLE SIGN IN BOX)
-            Add functionality-->
+          <!-- (B2 GOOGLE SIGN IN BOX) -->
       <div class="box  ">
-        <img src="static/assets/g-classroom.png" class="img-fluid">
+        <img src="static/assets/g-classroom.png" class="img-fluid" >
         <div class="border boreder-secondary">
         <ul class="list-group list-group-flush" id="google-courses">
+          
         </ul>
         </div>
       </div>
@@ -133,20 +163,36 @@
       <div class="col-3-">
         <div class=" box ">
           <!-- Add functionality; Change to green background upon Canvas sign in with new message -->
-          {%if csvUploadSuccess %}
+          {%if csvUploadSuccess == True or canvas == True%}
           <button type="button" class="btn btn-outline-success" disabled>
             <span class="position-relative text-secondary">
               Ready
               <span class="badge badge-sm badge-success rounded-circle ml-2 text-success">6</span>
             </span>
-            {% endif %}
-          {% if csvUploadSuccess == False %} 
+          {% endif %}
+          {%if csvUploadSuccess == True %}
+          <button type="button" class="btn btn-outline-danger ml-1" id="cancel-csv" >
+            Cancel
+          </button>
+          {% endif %}
+          {%if canvas == True %}
+          <button type="button" class="btn btn-outline-danger ml-1" id="cancel-canvas" >
+            Cancel
+          </button>
+          {% endif %}
+          {% if csvUploadSuccess == False and canvas == False %} 
           <button type="button" class="btn btn-outline-danger" disabled>
           <span class="position-relative text-secondary">
             Not Ready
             <span class="badge badge-sm badge-danger rounded-circle ml-2 text-danger">6</span>
           </span>
          </button>
+          {% endif %}
+          {%if csvUploadSuccess == False and canvas == false %}
+          <style>
+            .slow  .toggle-group { transition: left 0.7s; -webkit-transition: left 0.7s; }
+          </style>
+          <input id="enable_uploads" type="checkbox" data-toggle="toggle" data-on="CSV" data-off="Canvas" data-onstyle="success" data-offstyle="danger" data-style="slow">
           {% endif %}
         </div>
       </div>
@@ -163,10 +209,32 @@
                 <span class="badge badge-sm badge-success rounded-circle ml-2 text-success">6</span>
               </span>
              </button>
-            <button type="button" class="btn btn-info">Switch User</button>
+             <button type="button" class="btn btn-outline-success" id="switch-user" >
+              Switch User
+             </button>
         </div>
       </div> <!-- End of Last column to the right -->
     </div> <!-- End of Row 2 -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLongTitle"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
   
 </body> <!-- End of Application Page -->
     

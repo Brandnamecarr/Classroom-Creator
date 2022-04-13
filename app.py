@@ -5,6 +5,7 @@ import os
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
 import googleapiclient.discovery
+from googleapiclient.errors import HttpError
 from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField
 from wtforms.validators import InputRequired
@@ -12,7 +13,6 @@ from werkzeug.utils import secure_filename
 from classroom import Classroom
 from canvasapi import Canvas
 from csv_service import CsvDataPoint, csv_service
-from googleapiclient.errors import HttpError
 
 # needed to imitate https server
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -34,7 +34,6 @@ class UploadFileForm(FlaskForm):
     submit = SubmitField("Upload")
 
 @app.route("/", methods=['GET', 'POST'])
-@app.route("/home", methods=['GET', 'POST'])
 def home():
     csvUploadSuccess = False
     form = UploadFileForm()
@@ -50,9 +49,7 @@ def home():
         csvUploadSuccess = True
         csvFileName = file.filename
         return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename, canvas=False)
-    
     return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)
-
 
 ####################
 ##### CSV APIS #####
@@ -65,7 +62,9 @@ def cancel_csv():
 
     return redirect("/")
 
-# login process to access google api
+#############################
+##### GOOGLE OAUTH APIS #####
+#############################
 @app.route("/google_login")
 def google_login():
     "loging in page"
@@ -106,29 +105,14 @@ def google_success():
 
     return redirect("/")
 
-@app.route("/create_google_classrooms", methods = ['POST', 'GET'])
-def create_google_classrooms():
-    if 'credentials' not in session:
-        return redirect('google_login')
-    else:
-        creds = google.oauth2.credentials.Credentials(**session['credentials'])
-    
-        service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
-
-        if request.method == 'POST':
-            post_data = request.form['data']
-            # TODO this is where classroom objects are created and classrooms are created
-        
-        results = service.courses().list().execute()
-        courses = results.get('courses', [])
-        return jsonify(courses)
-
+# to be used as
 @app.route("/get_current_google_classrooms")
 def get_current_google_classrooms():
     creds = google.oauth2.credentials.Credentials(**session['credentials'])
     service = googleapiclient.discovery.build('classroom', 'v1', credentials=creds)
     results = service.courses().list().execute()
     courses = results.get('courses', [])
+        
     return jsonify(courses)
 
 @app.route("/google_logout")
@@ -251,6 +235,10 @@ def about():
 def docs():
     return render_template('docs.html')
 
+############################
+##### HELPER FUNCTIONS #####
+############################
+
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
           'refresh_token': credentials.refresh_token,
@@ -259,4 +247,8 @@ def credentials_to_dict(credentials):
           'client_secret': credentials.client_secret,
           'scopes': credentials.scopes}
 
+
+###################################
+##### APPLICATION ENTRY POINT #####
+###################################
 app.run(debug=True)
