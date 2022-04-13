@@ -221,8 +221,7 @@ def migrate_csv():
     courseName = courseInfo[0]
     courseSection = courseInfo[1]
     newClass = []
-    print(students)
-    print("CourseName: {} and CourseSection: {}.".format(courseName, courseSection))
+    # append new classroom as a list of size 1 to ship to Gooogle Classroom.
     newClass.append(Classroom(courseName, courseSection, students))
 
     try:
@@ -232,7 +231,7 @@ def migrate_csv():
         return "failure"
 
     # call the cleanup() function to remove the .csv file from the static/uploadedfiles folder.
-    # helps reset the app if the same file gets uploaded multiple times (I think).
+    # helps reset the filename variable.
     cleanOutUploadsFolder(tmp)
     return "success"
 
@@ -263,20 +262,17 @@ def makeCsvFilename():
     for file in files:
         path = path + file
     csvFileName = path
-    print("Returning {}".format(csvFileName))
     return csvFileName
 
 # deletes the uploaded .csv file.
 # prevents multiple uploads of the same file.
 def cleanOutUploadsFolder(path):
-    print("Going to remove {}".format(path))
     try:
         os.remove(path)
     except OSError as e:
         print("Error: {} : {}.".format(path, e.strerror))
     
     csvFileName = ""
-    print("After RESET, csvFileName is: {}".format(csvFileName))
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
