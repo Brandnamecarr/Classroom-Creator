@@ -77,6 +77,7 @@ function migrateCanvas() {
         showModal(header, body);
         getGoogleClassroomData()
       } else {
+        console.log(data);
         header = "Error";
         body = data;
         showModal(header, body);
@@ -99,6 +100,8 @@ function migratecsv() {
         showModal(header, body);
         getGoogleClassroomData()
       } else {
+        console.log("Data is:");
+        console.log(data);
         header = "Error";
         body = data;
         showModal(header, body);
