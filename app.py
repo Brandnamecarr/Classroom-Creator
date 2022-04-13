@@ -47,7 +47,6 @@ def home():
         file = form.file.data # First grab the file
         file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) # Then save the file
         csvUploadSuccess = True
-        csvFileName = file.filename
         return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename, canvas=False)
     return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)
 
@@ -206,21 +205,35 @@ def migrate_canvas():
 
 @app.route("/migrate_csv")
 def migrate_csv():
+    # initializing empty lists for the course information and list of students that will be received from a .CSV.
+    courseInfo = []
+    students = []
     # security feature to prevent users bypassing logins
     if 'credentials' not in session:
         return redirect('google_login')
     
-    csvObject = csv_service(csvFileName)
+    # gets the filename of the .csv in the static/uploadedfiles folder.
+    tmp = makeCsvFilename()
+    csvObject = csv_service(tmp)
 
     # gather classroom objects of courses from csv
     courseInfo, students = csvObject.get_from_csv()
-    newClass = Classroom(courseInfo[0], courseInfo[1], students)
+    courseName = courseInfo[0]
+    courseSection = courseInfo[1]
+    newClass = []
+    print(students)
+    print("CourseName: {} and CourseSection: {}.".format(courseName, courseSection))
+    newClass.append(Classroom(courseName, courseSection, students))
 
     try:
         upload_courses_to_google(newClass)
     except HttpError as error:
         print(error)
+        return "failure"
 
+    # call the cleanup() function to remove the .csv file from the static/uploadedfiles folder.
+    # helps reset the app if the same file gets uploaded multiple times (I think).
+    cleanOutUploadsFolder(tmp)
     return "success"
 
 ###########################
@@ -238,6 +251,32 @@ def docs():
 ############################
 ##### HELPER FUNCTIONS #####
 ############################
+
+# goes into the static/uploadedfiles directory.
+# only 1 .csv file will be there (going to implement a cleanup function).
+# get the name of that file, set it as the global csvFileName variable.
+def makeCsvFilename():
+    path = "static/uploadedfiles"
+    files = os.listdir(path)
+    print(files)
+    path = path + "/"
+    for file in files:
+        path = path + file
+    csvFileName = path
+    print("Returning {}".format(csvFileName))
+    return csvFileName
+
+# deletes the uploaded .csv file.
+# prevents multiple uploads of the same file.
+def cleanOutUploadsFolder(path):
+    print("Going to remove {}".format(path))
+    try:
+        os.remove(path)
+    except OSError as e:
+        print("Error: {} : {}.".format(path, e.strerror))
+    
+    csvFileName = ""
+    print("After RESET, csvFileName is: {}".format(csvFileName))
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
