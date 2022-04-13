@@ -1,3 +1,4 @@
+import csv
 from flask import Flask, render_template, request, session, abort, redirect, jsonify, url_for
 from datetime import datetime
 import os
@@ -9,9 +10,9 @@ from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField
 from wtforms.validators import InputRequired
 from werkzeug.utils import secure_filename
-from csv_service import CsvDataPoint, csv_service
-from canvasapi import Canvas
 from classroom import Classroom
+from canvasapi import Canvas
+from csv_service import CsvDataPoint, csv_service
 
 # needed to imitate https server
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
@@ -22,6 +23,9 @@ Scopes = ["https://www.googleapis.com/auth/classroom.courses", "https://www.goog
 
 app = Flask(__name__)
 app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
+
+# Global string for csv filename
+csvFileName = ""
 
 # class for uploading a file upload form.
 class UploadFileForm(FlaskForm):
@@ -43,9 +47,9 @@ def home():
         file = form.file.data # First grab the file
         file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) # Then save the file
         csvUploadSuccess = True
+        csvFileName = file.filename
         return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename, canvas=False)
-    
-    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)   
+    return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)
 
 ####################
 ##### CSV APIS #####
@@ -195,6 +199,25 @@ def migrate_canvas():
 
     try:
         upload_courses_to_google(courses)
+    except HttpError as error:
+        print(error)
+
+    return "success"
+
+@app.route("/migrate_csv")
+def migrate_csv():
+    # security feature to prevent users bypassing logins
+    if 'credentials' not in session:
+        return redirect('google_login')
+    
+    csvObject = csv_service(csvFileName)
+
+    # gather classroom objects of courses from csv
+    courseInfo, students = csvObject.get_from_csv()
+    newClass = Classroom(courseInfo[0], courseInfo[1], students)
+
+    try:
+        upload_courses_to_google(newClass)
     except HttpError as error:
         print(error)
 

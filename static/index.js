@@ -34,6 +34,10 @@ $(document).ready(function(){
     $('.canvas-login').toggle();
     $('#canvas-form').toggle();
   });
+
+  $( '#migrate-csv' ).click(function() {
+    migratecsv();
+  });
   
   $( "#cancel-connect" ).click(function() {
     $('.csv-checkbox').toggle();
@@ -44,8 +48,6 @@ $(document).ready(function(){
   $( '#migrate-canvas' ).click(function() {
     migrateCanvas();
   });
-
-  
   
   getGoogleClassroomData();
   getCanvasClassroomData();
@@ -81,6 +83,29 @@ function migrateCanvas() {
       }
     }
     });
+}
+
+function migratecsv() {
+  loadingHeader("Copying your courses to Google Classroom...")
+  console.log("POSITION 1 copying....");
+  $.ajax({
+    url: "migrate_csv",
+    success: function(data){
+      if (data == "success") {
+        console.log("POSITION 3: HOORAY!");
+        header = "Success";
+        body = `Congrats! Your courses were successfully uploaded to Google Classroom. 
+                We reccomend you verify all Course and Student data is correct.`;
+        showModal(header, body);
+        getGoogleClassroomData()
+      } else {
+        header = "Error";
+        body = data;
+        showModal(header, body);
+      }
+    }
+    });
+    console.log("POSITION 2 post-ajax....");
 }
 
 // google signin funciton will send token to flask server

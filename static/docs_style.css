@@ -8,6 +8,9 @@ footer {
     width: 100%;
 }
 
+body {
+    font-family: 'Questrial', sans-serif;
+
 .h1, .h3, .p, .div, .body {
     font-family: 'Questrial', sans-serif;
 }
