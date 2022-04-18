@@ -1,0 +1,11 @@
+{
+    "project-name": "Classroom Creator",
+    "description:": "A utility tool for teachers to migrate their data from Canvas or a Comma-Separated Values (.CSV) file, to Google Classroom.",
+    "tas": "Jennifer Something",
+    "members": [
+        "Brandon Carr",
+        "Bryan Kristofferson",
+        "Phillip Hurm"
+    ],
+    "images": []
+}
