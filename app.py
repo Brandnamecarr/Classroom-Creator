@@ -286,4 +286,5 @@ def credentials_to_dict(credentials):
 ###################################
 ##### APPLICATION ENTRY POINT #####
 ###################################
-app.run(debug=True)
+
+app.run(host='0.0.0.0', port='5000')
