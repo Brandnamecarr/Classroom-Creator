@@ -160,7 +160,7 @@ def get_canvas_courses():
             emails = []
             for user in users:
                 if user.id in students:
-                    emails.append(user.ema5/2 Monday su5/2 Monday sub for Davila St. Pete???b for Davila St. Pete???il)
+                    emails.append(user.email)
             
             courses.append(Classroom(course.name, sec.name, emails))
     
