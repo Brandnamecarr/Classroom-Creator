@@ -17,16 +17,16 @@ $(document).ready(function(){
   });
 
   $( "#switch-user" ).click(function() {
-    window.location.replace("http://localhost:5000/google_logout");
+    window.location.replace("/google_logout");
   });
 
   $( "#cancel-csv" ).click(function() {
     var $filename = $('#filename');
-    window.location.replace("http://localhost:5000/cancel_csv?file=" + filename);
+    window.location.replace("/cancel_csv?file=" + filename);
   });
 
   $( "#cancel-canvas" ).click(function() {
-    window.location.replace("http://localhost:5000/canvas_disconnect");
+    window.location.replace("/canvas_disconnect");
   });
 
   $( "#canvas-connect" ).click(function() {
@@ -145,7 +145,7 @@ var checkGoogleStatus = function() {
     url: "google_login_check",
     success: function(data){
       if (data === "false"){
-        window.location.replace("http://localhost:5000/google_login");
+        window.location.replace("/google_login");
       }
     }
   });
