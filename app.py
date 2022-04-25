@@ -28,7 +28,7 @@ app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
 csvFileName = ""
 
 # Create static/uploadedfiles directory for CSV upload component.
-os.mkdir('static/uploadedfiles')
+os.mkdir('static/uploadedfiles', exist_ok=True)
 
 # class for uploading a file upload form.
 class UploadFileForm(FlaskForm):
