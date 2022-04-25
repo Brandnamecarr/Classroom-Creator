@@ -98,6 +98,7 @@ function migratecsv() {
         showModal(header, body);
         getGoogleClassroomData()
       } else {
+        console.log(data);
         header = "Error";
         body = data;
         showModal(header, body);
