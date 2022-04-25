@@ -1,4 +1,5 @@
 import csv
+from distutils.log import error
 from flask import Flask, render_template, request, session, abort, redirect, jsonify, url_for
 from datetime import datetime
 import os
@@ -28,7 +29,10 @@ app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
 csvFileName = ""
 
 # Create static/uploadedfiles directory for CSV upload component.
-os.mkdir('static/uploadedfiles', exist_ok=True)
+try:
+    os.mkdir('static/uploadedfiles')
+except:
+    pass
 
 # class for uploading a file upload form.
 class UploadFileForm(FlaskForm):
