@@ -120,7 +120,7 @@ function getGoogleClassroomData() {
           items.push("<li class=\"list-group-item\">" + data[i].name + " " + data[i].section + "</li>");
         }
       }
-      $('#google-courses').clear();
+      $('#google-courses').empty();
       $('#google-courses').append(items);
     }
     });
@@ -135,7 +135,7 @@ function getCanvasClassroomData() {
         for (let i = 0; i < data.length; i++) {
           items.push("<li class=\"list-group-item\">" + data[i].course_name + " " + data[i].course_section + "</li>");
         }
-        $('#canvas-courses').clear();
+        $('#canvas-courses').empty();
         $('#canvas-courses').append(items);
       }
       });
