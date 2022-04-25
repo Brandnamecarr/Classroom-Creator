@@ -27,6 +27,9 @@ app.secret_key = b'_5#y2L"Fsss8z\n\xec]/'
 # Global string for csv filename
 csvFileName = ""
 
+# Create static/uploadedfiles directory for CSV upload component.
+os.mkdir('static/uploadedfiles')
+
 # class for uploading a file upload form.
 class UploadFileForm(FlaskForm):
     # creates buttons with these names. 
