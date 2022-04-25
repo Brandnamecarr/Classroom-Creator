@@ -30,7 +30,7 @@ csvFileName = ""
 
 # Create static/uploadedfiles directory for CSV upload component.
 try:
-    os.mkdir('static/uploadedfiles')
+    os.mkdir(os.path.join('static', 'uploadedfiles'))
 except:
     pass
 
@@ -64,7 +64,7 @@ def home():
 def cancel_csv():
     if request.method == 'POST':
         post_data = request.form['file']
-        os.remove(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles',secure_filename(post_data)))
+        os.remove(os.path.join(os.path.abspath(os.path.dirname(__file__)),os.path.join('static', 'uploadedfiles'),secure_filename(post_data)))
 
     return redirect("/")
 
@@ -262,7 +262,7 @@ def docs():
 # only 1 .csv file will be there (going to implement a cleanup function).
 # get the name of that file, set it as the global csvFileName variable.
 def makeCsvFilename():
-    path = "static/uploadedfiles"
+    path = os.path.join('static', 'uploadedfiles')
     files = os.listdir(path)
     print(files)
     path = path + "/"
