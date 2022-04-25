@@ -52,7 +52,7 @@ def home():
         return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=True)
     elif form.validate_on_submit():
         file = form.file.data # First grab the file
-        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),'static/uploadedfiles', secure_filename(file.filename))) # Then save the file
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),os.path.join('static', 'uploadedfiles'), secure_filename(file.filename))) # Then save the file
         csvUploadSuccess = True
         return render_template('index.html', form=form, csvUploadSuccess = csvUploadSuccess, filename=file.filename, canvas=False)
     return render_template('index.html', form=form, csvUploadSuccess=csvUploadSuccess, canvas=False)
